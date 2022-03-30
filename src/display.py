@@ -57,13 +57,26 @@ def draw_graph(
             if fmt_str is not None and fmt_data is not None:
                 xinfo, yinfo, hinfo = info
 
+                pos=0
                 for f_str, f_data in zip(fmt_str, fmt_data):
-                    ax.annotate(
-                        f_str.format(*f_data[i]),
-                        xy=(xinfo, yinfo),
-                        xycoords='axes fraction',
-                        fontsize=8,
-                    )
+                    #Getting rid of format(*f_data[i] in commented section below
+                    #Doing it temporarily w/ a simple conditional; pos=0 is where boardID is handled
+                    if pos == 0:       
+                        ax.annotate(
+                            *f_data[i],
+                            xy=(xinfo, yinfo),
+                            xycoords='axes fraction',
+                            fontsize=8,
+                        )
+                    else:
+                        ax.annotate(
+                            f_str.format(*f_data[i]),
+                            xy=(xinfo, yinfo),
+                            xycoords='axes fraction',
+                            fontsize=8,
+                        )
+
+                    pos=pos+1
 
                     yinfo -= hinfo
         except IndexError:
