@@ -189,7 +189,6 @@ class DataFormat_v2(DataFormat):
     structure = {
         'label': 'TEXT',
         'board': 'TEXT',
-        'tester': 'TEXT',
         'offset': 'INTEGER',
         'nstep': 'INTEGER',
         'nstep_event': 'INTEGER',
@@ -197,6 +196,7 @@ class DataFormat_v2(DataFormat):
         'nsample': 'INTEGER',
         'coefs': 'TEXT',
         'info': 'TEXT',
+        'tester' : 'TEXT',
     }
 
     def parser(self, raw, output='entry'):
@@ -217,18 +217,16 @@ class DataFormat_v2(DataFormat):
                 tempStr=read_config_line(fp, False)
 
             entry.append(tempDict["BOARDID"])
-            entry.append(tempDict["TESTERID"])
             entry.append(int(tempDict["CHANNELMIN"]))
             entry.append(int(tempDict["NUMBEROFSTEPS"]))
             entry.append(int(tempDict["EVENTSPERSTEP"]))
             entry.append(int(tempDict["DACPERSTEP"]))
             entry.append(int(tempDict["NSAMPLES"]))
-
             
-            offset = entry[3]
-            nstep = entry[4]
-            ntrial = entry[5]
-            nsample = entry[7]
+            offset = entry[2]
+            nstep = entry[3]
+            ntrial = entry[4]
+            nsample = entry[6]
 
             group = offset // 16
 
@@ -334,6 +332,7 @@ class DataFormat_v2(DataFormat):
             if output == 'signal':
                 return mean, sigma, y, pars, errs
 
+        entry.append(tempDict["TESTERID"])            
         return entry
 
     
