@@ -213,15 +213,15 @@ class DataFormat_v2(DataFormat):
                 key=tempStr.split(":", 1)[0]
                 value=tempStr.split(":", 1)[1]
                 tempDict[key] = value
-
                 tempStr=read_config_line(fp, False)
 
-            entry.append(tempDict["BOARDID"])
-            entry.append(int(tempDict["CHANNELMIN"]))
-            entry.append(int(tempDict["NUMBEROFSTEPS"]))
-            entry.append(int(tempDict["EVENTSPERSTEP"]))
-            entry.append(int(tempDict["DACPERSTEP"]))
-            entry.append(int(tempDict["NSAMPLES"]))
+                
+            entry.append(tempDict.get("BOARDID", "NA"))
+            entry.append(int(tempDict.get("CHANNELMIN", "NA")))
+            entry.append(int(tempDict.get("NUMBEROFSTEPS", "NA")))
+            entry.append(int(tempDict.get("EVENTSPERSTEP", "NA")))
+            entry.append(int(tempDict.get("DACPERSTEP", "NA")))
+            entry.append(int(tempDict.get("NSAMPLES", "NA")))
             
             offset = entry[2]
             nstep = entry[3]
@@ -332,7 +332,7 @@ class DataFormat_v2(DataFormat):
             if output == 'signal':
                 return mean, sigma, y, pars, errs
 
-        entry.append(tempDict["TESTERID"])            
+        entry.append(tempDict.get("TESTERID", "NA"))            
         return entry
 
     
