@@ -202,7 +202,7 @@ class DataFormat_v1(DataFormat):
             print(pars)
 
             if output == 'signal':
-                return mean, sigma, y, pars, errs
+                return mean, sigma, y, pars, errs, entry
 
         return entry
 

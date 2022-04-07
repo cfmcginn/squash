@@ -74,6 +74,7 @@ def draw_graph(
         plt.show()
     else:
         plt.savefig(output)
+        plt.close()
 
 
 def draw_histogram(vals, bins, labels, xrange, yrange):

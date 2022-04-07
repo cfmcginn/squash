@@ -9,11 +9,10 @@ import numpy as np
 
 def analysis():
     data = [
-        # 'dat/board0x70_Channel0to15_20210311_InjectCharge.dat',
-        # 'dat/board0x70_Channel16to31_20210311_InjectCharge.dat',
-        # 'dat/board0x70_Channel32to47_20210311_InjectCharge.dat',
-        # 'dat/board0x70_Channel48to63_20210311_InjectCharge.dat',
-    ]
+        '/home/cfmcginn/CUBHIG/tempPlots2022/Apr06/boardE169168_Channel0to15_20220401_InjectCharge.dat',
+        '/home/cfmcginn/CUBHIG/tempPlots2022/Apr06/boardE169168_Channel16to31_20220401_InjectCharge.dat',
+        '/home/cfmcginn/CUBHIG/tempPlots2022/Apr06/boardE169168_Channel32to47_20220401_InjectCharge.dat',
+        '/home/cfmcginn/CUBHIG/tempPlots2022/Apr06/boardE169168_Channel48to63_20220401_InjectCharge.dat']
 
     squash = factory['auto']()
 
@@ -45,15 +44,16 @@ def analysis():
 
     for group in zip(*[iter(data)] * 1):
         board_id = 'BOARDID'
-
+        startCh = 0
+        
         _m = np.zeros((40, 0, 28))
         _s = np.zeros((40, 0, 28))
         _y = np.zeros((0, 40))
         _p = np.zeros((0, 2))
         _e = np.zeros((0, 2))
-
+        
         for f in group:
-            mean, sigma, y, pars, errs = squash.parser(f, output='signal')
+            mean, sigma, y, pars, errs, entry = squash.parser(f, output='signal')
 
             _m = np.concatenate((_m, mean), axis=1)
             _s = np.concatenate((_s, sigma), axis=1)
@@ -61,6 +61,12 @@ def analysis():
             _p = np.vstack((_p, pars))
             _e = np.vstack((_e, errs))
 
+            board_id=entry[1]
+            startCh=entry[2]
+            
+        print("BOARD " + board_id)
+        print(startCh)
+        
         yp = np.array(_p[:,0])
         yg = np.array(_p[:,1])
 
@@ -77,10 +83,11 @@ def analysis():
             ],
             'fmt_data': [
                 [(board_id,)] * _y.shape[0],
-                list(zip(range(_y.shape[0]))),
+#                [(startCh,)],
+                list(zip(range(startCh,startCh+_y.shape[0]))),
                 pars.tolist(),
             ],
-            'output': 'pulse_max_vs_step_board_{}'.format(board_id),
+            'output': 'output/pulse_max_vs_step_board_{}_channel_{}to{}'.format(board_id, startCh, startCh+15),
         }
 
         draw_graph(_y, None, **pulse_max_vs_step_disp_opts)
@@ -105,9 +112,9 @@ def analysis():
         }
 
         for c in range(_m.shape[1]):
-            pulse_vs_sample_disp_opts['fmt_data'][1] = [(c,)] * _m.shape[0]
+            pulse_vs_sample_disp_opts['fmt_data'][1] = [(c+startCh,)] * _m.shape[0]
             pulse_vs_sample_disp_opts['output'] = \
-                'pulse_vs_sample_board_{}_channel_{}.png'.format(board_id, c)
+                'output/pulse_vs_sample_board_{}_channel_{}.png'.format(board_id, c+startCh)
             draw_graph(_m[:,c,:], sigma[:,c,:], **pulse_vs_sample_disp_opts)
 
         # ---------------------------------------------------------------------
@@ -118,7 +125,7 @@ def analysis():
             'labels': ('channel', 'pedestal'),
             'fmt_str': ['board {}'],
             'fmt_data': [(board_id,)],
-            'output': 'pedestal_vs_channel_board_{}'.format(board_id),
+            'output': 'output/pedestal_vs_channel_board_{}'.format(board_id),
         }
 
         draw_graph(yp, None, **pedestal_vs_channel_disp_opts)
@@ -131,7 +138,7 @@ def analysis():
             'labels': ('channel', 'gain'),
             'fmt_str': ['board {}'],
             'fmt_data': [(board_id,)],
-            'output': 'gain_vs_channel_board_{}'.format(board_id),
+            'output': 'output/gain_vs_channel_board_{}'.format(board_id),
         }
 
         draw_graph(yg, None, **gain_vs_channel_disp_opts)
